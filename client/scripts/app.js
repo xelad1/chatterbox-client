@@ -1,5 +1,12 @@
 
 
+var idGenMaker = function() {
+  var count = 0;
+  return function() {
+    return "chatID" + count;
+    count++
+  }
+}
 
 var displayChat = function(results) {
     for(var i = 0; i < results.length; i ++) {
@@ -10,11 +17,15 @@ var displayChat = function(results) {
       if(results[i].text === undefined) {
         displayText = '';
       }
+      var grossID = results[i].creatdAt + results[i].username;
 
-      htmlString +=  "<p>" + "<a href=''>" + results[i].username + "</a>" + ": " +  escapeHTML(displayText) + "</p>";
+      htmlString +=  "<p>" + "<a href='' onclick='" + grossID.toString() + "'>" + results[i].username + "</a>" + ": " +  escapeHTML(displayText) + "</p>";
       $('#chatter').append(htmlString);
 
-
+      $('#' + grossID).click(function(e) {
+        e.preventDefault();
+        console.log("Did it");
+      })
     }
 }
 
