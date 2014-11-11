@@ -4,9 +4,11 @@ if (!/(&|\?)username=/.test(window.location.search)) {
   if (newSearch !== '' & newSearch !== '?') {
     newSearch += '&';
   }
+  window.userName = (prompt('What is your name?') || 'anonymous');
   newSearch += 'username=' + (prompt('What is your name?') || 'anonymous');
   window.location.search = newSearch;
 }
+
 
 // Put your parse application keys here!
 $.ajaxPrefilter(function (settings, _, jqXHR) {

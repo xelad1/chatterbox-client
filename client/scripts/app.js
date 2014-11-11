@@ -1,12 +1,48 @@
 
+$(document).ready(function() {
+  $('#button').click(function(e) {
+  console.log("clicked");
+  e.preventDefault();
+  var text = $('input').text();
+  sendMessage(text, userName, "Xelandlerb");
+  });
+});
+
+
+var sendMessage = function(text, username, roomname) {
+  var message = {
+  'username' : username,
+  'text': text,
+  'roomname': roomname
+};
+
+
+  $.ajax({
+    // always use this url
+    url: 'https://api.parse.com/1/classes/chatterbox',
+    type: 'POST',
+    data: JSON.stringify(message),
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('chatterbox: Message sent');
+    },
+    error: function (data) {
+      // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+      console.error('chatterbox: Failed to send message');
+    }
+  });
+}
+
 
 var idGenMaker = function() {
   var count = 0;
   return function() {
+    count++;
     return "chatID" + count;
-    count++
   }
 }
+
+var idGen = idGenMaker();
 
 var displayChat = function(results) {
     for(var i = 0; i < results.length; i ++) {
@@ -17,19 +53,26 @@ var displayChat = function(results) {
       if(results[i].text === undefined) {
         displayText = '';
       }
-      var grossID = results[i].creatdAt + results[i].username;
+      var niceID = idGen();
 
-      htmlString +=  "<p>" + "<a href='' onclick='" + grossID.toString() + "'>" + results[i].username + "</a>" + ": " +  escapeHTML(displayText) + "</p>";
+      htmlString +=  "<p>" + "<a href ='' id='" + niceID + "'>" + results[i].username + "</a>" + ": " +  escapeHTML(displayText) + "</p>";
+
       $('#chatter').append(htmlString);
-
-      $('#' + grossID).click(function(e) {
+      (function(){
+        var mObj = results[i];
+        $('#' + niceID).click(function(e) {
+        filtered = mObj;
         e.preventDefault();
-        console.log("Did it");
-      })
+      });
+
+      })()
+
     }
 }
 
+var allMessages = [];
 var checkMessages = [];
+var filtered = false;
 
 /*
  & --> &amp;
@@ -67,7 +110,15 @@ setInterval(function() {
     var newMessages = diff(x.results, checkMessages, function(y) {
       return y.createdAt;
     });
-    displayChat(newMessages);
     checkMessages = checkMessages.concat(newMessages);
+    if(filtered) {
+        newMessages = _.filter(newMessages, function(messageObj) { return messageObj.username === filtered.username});
+        console.log(filtered);
+        allMessages = checkMessages;
+        checkMessages = _.filter(checkMessages, function(messageObj) { return messageObj.username === filtered.username});
+        $('#chatter').empty();
+        displayChat(checkMessages);
+      }
+    displayChat(newMessages);
   });
-}, 2000);
+}, 500);
