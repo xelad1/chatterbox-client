@@ -11,8 +11,10 @@ var displayChat = function(results) {
         displayText = '';
       }
 
-      htmlString += "<p>"+ results[i].username + ": " +  escapeHTML(displayText) + "</p>";
+      htmlString +=  "<p>" + "<a href=''>" + results[i].username + "</a>" + ": " +  escapeHTML(displayText) + "</p>";
       $('#chatter').append(htmlString);
+
+
     }
 }
 
