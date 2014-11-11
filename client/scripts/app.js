@@ -1,9 +1,9 @@
 
 $(document).ready(function() {
   $('#button').click(function(e) {
-  console.log("clicked");
   e.preventDefault();
-  var text = $('input').text();
+  var text = document.getElementById('textbox').value;
+  var userName = window.location.search.replace(/\?username=/g,"");
   sendMessage(text, userName, "Xelandlerb");
   });
 });
@@ -15,7 +15,6 @@ var sendMessage = function(text, username, roomname) {
   'text': text,
   'roomname': roomname
 };
-
 
   $.ajax({
     // always use this url
